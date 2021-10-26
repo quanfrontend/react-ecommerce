@@ -12,6 +12,8 @@ export default class App extends Component {
       productsCart: [],
     };
     this.onAddClick = this.onAddClick.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
   }
   async componentDidMount() {
     const url = "https://5fa3d0d9f10026001618df85.mockapi.io/products";
@@ -19,15 +21,65 @@ export default class App extends Component {
     this.setState({
       products: call.data,
     });
+
+    let local = localStorage.getItem("item");
+    if (local) {
+      this.setState({
+        productsCart: JSON.parse(local),
+      });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.productsCart !== prevState) {
+      const { productsCart } = this.state;
+      localStorage.setItem("item", JSON.stringify(productsCart));
+    }
   }
 
   onAddClick(product) {
     return () => {
       const { productsCart } = this.state;
-      this.setState({
-        productsCart: [...productsCart, { ...product, inCart: 1 }],
-      });
-      console.log(productsCart);
+      let value = productsCart.findIndex(
+        (productCart) => productCart.id === product.id
+      );
+      if (value < 0) {
+        product.inCart = 1;
+        this.setState({
+          productsCart: [...productsCart, product],
+        });
+      } else {
+        productsCart[value].inCart = +productsCart[value].inCart + 1;
+        this.setState({
+          productsCart: [...productsCart],
+        });
+      }
+    };
+  }
+
+  handleChange(id) {
+    return (e) => {
+      const { productsCart } = this.state;
+      let value = productsCart.findIndex((item) => item.id === id);
+      if (value >= 0) {
+        productsCart[value].inCart = e.target.value;
+        this.setState({
+          productsCart: [...productsCart],
+        });
+      }
+    };
+  }
+
+  handleDelete(id) {
+    return (e) => {
+      const { productsCart } = this.state;
+      let value = productsCart.findIndex((item) => item.id === id);
+      if (value >= 0) {
+        productsCart.splice(value, 1);
+        this.setState({
+          productsCart: [...productsCart],
+        });
+      }
     };
   }
 
@@ -35,7 +87,11 @@ export default class App extends Component {
     const { products, productsCart } = this.state;
     return (
       <div>
-        <Header productsCart={productsCart} />
+        <Header
+          productsCart={productsCart}
+          handleChange={this.handleChange}
+          handleDelete={this.handleDelete}
+        />
         <Products products={products} onAddClick={this.onAddClick} />
       </div>
     );

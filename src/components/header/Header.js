@@ -25,7 +25,7 @@ export default class Header extends Component {
   }
 
   render() {
-    const { productsCart } = this.props;
+    const { productsCart, handleChange, handleDelete } = this.props;
     return (
       <header className="header">
         <button href="#" className="logo">
@@ -46,7 +46,9 @@ export default class Header extends Component {
           >
             <FaShoppingCart />
             <div className="cart-number" id="cart-number">
-              0
+              {productsCart.reduce((sum, num) => {
+                return sum + +num.inCart;
+              }, 0)}
             </div>
           </div>
           <div className="fas fa-bars" id="menu-toggle" onClick={this.showMenu}>
@@ -54,7 +56,11 @@ export default class Header extends Component {
           </div>
         </div>
         <div className="shopping-cart" ref={this.shoppingCart}>
-          <Cart productsCart={productsCart} />
+          <Cart
+            productsCart={productsCart}
+            handleChange={handleChange}
+            handleDelete={handleDelete}
+          />
         </div>
       </header>
     );

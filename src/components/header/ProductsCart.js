@@ -3,10 +3,10 @@ import { FaTrash } from "react-icons/fa";
 
 export default class ProductsCart extends Component {
   render() {
-    const { productCart } = this.props;
+    const { productCart, handleChange, handleDelete } = this.props;
     return (
       <div className="box">
-        <FaTrash className="fa-trash" />
+        <FaTrash className="fa-trash" onClick={handleDelete(productCart.id)} />
         <img src={productCart.image} alt="" />
         <div className="content">
           <h3>{productCart.name}</h3>
@@ -17,7 +17,8 @@ export default class ProductsCart extends Component {
             id="count"
             min="1"
             max="100"
-            defaultValue="1"
+            value={productCart.inCart}
+            onChange={handleChange(productCart.id)}
           />
         </div>
       </div>
