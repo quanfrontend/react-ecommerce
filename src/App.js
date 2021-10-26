@@ -1,3 +1,4 @@
+/* eslint-disable no-dupe-class-members */
 import React, { Component } from "react";
 import "./App.css";
 import Header from "./components/header/Header";
@@ -16,25 +17,23 @@ export default class App extends Component {
     this.handleDelete = this.handleDelete.bind(this);
   }
   async componentDidMount() {
-    const url = "https://5fa3d0d9f10026001618df85.mockapi.io/products";
-    const call = await axios.get(url);
-    this.setState({
-      products: call.data,
-    });
-
     let local = localStorage.getItem("item");
     if (local) {
       this.setState({
         productsCart: JSON.parse(local),
       });
     }
+
+    const url = "https://5fa3d0d9f10026001618df85.mockapi.io/products";
+    const call = await axios.get(url);
+    this.setState({
+      products: call.data,
+    });
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.productsCart !== prevState) {
-      const { productsCart } = this.state;
-      localStorage.setItem("item", JSON.stringify(productsCart));
-    }
+  componentDidUpdate() {
+    const { productsCart } = this.state;
+    localStorage.setItem("item", JSON.stringify(productsCart));
   }
 
   onAddClick(product) {
